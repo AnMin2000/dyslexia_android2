@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -18,16 +19,22 @@ import com.example.myapplication.dto.Album;
 
 import java.io.ByteArrayOutputStream;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CameraActivity extends AppCompatActivity {
 
+    private static final int REQUEST_IMAGE_CODE = 101;
     private Button btn_picture;
     private ImageView imageView;
 
-    private static final int REQUEST_IMAGE_CODE = 101;
+    private static final int CAMERA_REQUEST_CODE = 1;
+    private Uri imageUri;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -66,37 +73,49 @@ public class CameraActivity extends AppCompatActivity {
 
             Bundle extras = data.getExtras();
 
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Bitmap photo = (Bitmap) extras.get("data");
+                //System.out.println(photo);
+                imageUri = getImageUri(photo);
 
-            camera(imageBitmap);
-           // imageView.setImageBitmap(imageBitmap); 앨범에 사진을 표시 하는 코드
+                // 이미지를 서버로 업로드
+                uploadImageToServer(imageUri);
+            }
         }
-    }
-    private void camera(Bitmap bitmap){
+
+    private Uri getImageUri(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        String encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+        return Uri.parse(path);
+    }
 
-        Album album = new Album();
-        album.setAlbumId(encodedImage);
+    private void uploadImageToServer(Uri imageUri) {
+        try {
+            RequestBody requestFile = RequestBody.create(MediaType.parse(getContentResolver().getType(imageUri)), imageUri.getPath());
+            MultipartBody.Part body = MultipartBody.Part.createFormData("image", "image.jpg", requestFile);
 
-        Call<String> call = RetrofitBuilder.api.getCameraResponse(album);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                System.out.println(""+response);
-                if (response.isSuccessful()) {
-                    Log.d("RESPONSE: ", response.body());
-                } else {
-                    Log.d("RESPONSE", "FAILURE");
+
+            // Retrofit API 인터페이스 생성
+            Call<String> call =  RetrofitBuilder.api.getCameraResponse(body);
+
+            // API 호출
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("Upload", "Image uploaded successfully");
+                    } else {
+                        Log.e("Upload", "Image upload failed");
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-                Log.d("CONNECTION FAILURE: ", t.getLocalizedMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                    Log.e("Upload", "Image upload failed2", t);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
