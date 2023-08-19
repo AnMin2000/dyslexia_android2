@@ -49,6 +49,7 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 takePicture();
+
             }
         });
     }
@@ -74,11 +75,14 @@ public class CameraActivity extends AppCompatActivity {
             Bundle extras = data.getExtras();
 
             Bitmap photo = (Bitmap) extras.get("data");
-                //System.out.println(photo);
+            // imageView.setImageBitmap(photo); 앨범에 사진을 표시 하는 코드
+
+
                 imageUri = getImageUri(photo);
 
                 // 이미지를 서버로 업로드
                 uploadImageToServer(imageUri);
+
             }
         }
 
@@ -91,8 +95,10 @@ public class CameraActivity extends AppCompatActivity {
 
     private void uploadImageToServer(Uri imageUri) {
         try {
+
+
             RequestBody requestFile = RequestBody.create(MediaType.parse(getContentResolver().getType(imageUri)), imageUri.getPath());
-            MultipartBody.Part body = MultipartBody.Part.createFormData("image", "image.jpg", requestFile);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("image", "image4.jpg", requestFile);
 
 
             // Retrofit API 인터페이스 생성
@@ -103,7 +109,7 @@ public class CameraActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<String> call, Response<String> response) {
                     if (response.isSuccessful()) {
-                        Log.d("Upload", "Image uploaded successfully");
+                        Log.d("Upload", response.body());
                     } else {
                         Log.e("Upload", "Image upload failed");
                     }
