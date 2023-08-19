@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.dto;
 
 public class User {
     private String id;

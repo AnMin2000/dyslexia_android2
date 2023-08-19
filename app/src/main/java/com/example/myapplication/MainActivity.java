@@ -2,10 +2,13 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.example.myapplication.dto.User;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
            // System.out.println(user.getId());
             Log.d("BUTTON CLICKED", "id: " + user.getId() + ", pw: " + user.getPassword());
             login(user);
+            Intent intent = new Intent(MainActivity.this,CameraActivity.class);
+            startActivity(intent);
         });
     }
 
