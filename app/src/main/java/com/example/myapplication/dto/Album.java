@@ -1,5 +1,7 @@
 package com.example.myapplication.dto;
 
+import android.graphics.Bitmap;
+
 public class Album {
     private String albumId;
 

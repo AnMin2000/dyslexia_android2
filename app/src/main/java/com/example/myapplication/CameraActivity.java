@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import com.example.myapplication.dto.Album;
+
+import java.io.ByteArrayOutputStream;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,13 +68,19 @@ public class CameraActivity extends AppCompatActivity {
 
             Bitmap imageBitmap = (Bitmap) extras.get("data");
 
-            Album album = new Album();
-            album.setAlbumId(imageBitmap.toString());
-            camera(album);
+            camera(imageBitmap);
            // imageView.setImageBitmap(imageBitmap); 앨범에 사진을 표시 하는 코드
         }
     }
-    private void camera(Album album){
+    private void camera(Bitmap bitmap){
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        String encodedImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+        Album album = new Album();
+        album.setAlbumId(encodedImage);
+
         Call<String> call = RetrofitBuilder.api.getCameraResponse(album);
         call.enqueue(new Callback<String>() {
             @Override
