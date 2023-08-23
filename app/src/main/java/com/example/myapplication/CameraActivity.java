@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,7 +19,11 @@ import android.widget.ImageView;
 
 import com.example.myapplication.dto.Album;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Locale;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -45,6 +51,7 @@ public class CameraActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
 
         btn_picture = findViewById(R.id.btn_picture);
+
         btn_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,39 +96,60 @@ public class CameraActivity extends AppCompatActivity {
     private Uri getImageUri(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "image", null);
         return Uri.parse(path);
     }
 
     private void uploadImageToServer(Uri imageUri) {
         try {
+            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+            if (inputStream != null) {
+                // InputStream을 Bitmap으로 변환
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
+                // Bitmap을 다시 InputStream으로 변환
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                byte[] byteArray = byteArrayOutputStream.toByteArray();
+                InputStream convertedInputStream = new ByteArrayInputStream(byteArray);
 
-            RequestBody requestFile = RequestBody.create(MediaType.parse(getContentResolver().getType(imageUri)), imageUri.getPath());
-            MultipartBody.Part body = MultipartBody.Part.createFormData("image", "image4.jpg", requestFile);
+                // 현재 날짜와 시간을 기반으로 고유한 이미지 파일 이름 생성
+                String imageName = generateImageFileName();
 
+                RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), byteArray);
+                MultipartBody.Part body = MultipartBody.Part.createFormData("image", imageName, requestFile);
 
-            // Retrofit API 인터페이스 생성
-            Call<String> call =  RetrofitBuilder.api.getCameraResponse(body);
+                Call<String> call = RetrofitBuilder.api.getCameraResponse(body);
 
-            // API 호출
-            call.enqueue(new Callback<String>() {
-                @Override
-                public void onResponse(Call<String> call, Response<String> response) {
-                    if (response.isSuccessful()) {
-                        Log.d("Upload", response.body());
-                    } else {
-                        Log.e("Upload", "Image upload failed");
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("Upload", response.body());
+                        } else {
+                            Log.e("Upload", "이미지 업로드 실패");
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<String> call, Throwable t) {
-                    Log.e("Upload", "Image upload failed2", t);
-                }
-            });
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.e("Upload", "이미지 업로드 실패", t);
+                    }
+                });
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private String generateImageFileName() {
+        // 현재 날짜와 시간 가져오기
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+        String formattedDate = sdf.format(calendar.getTime());
+
+        return "이미지_" + formattedDate + ".jpg";
+    }
+
+
 }
