@@ -21,6 +21,7 @@ import com.example.myapplication.dto.Album;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 import java.util.Locale;
@@ -95,25 +96,18 @@ public class CameraActivity extends AppCompatActivity {
 
     private Uri getImageUri(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream); // 압축 품질을 80으로 변경
         String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "image", null);
         return Uri.parse(path);
     }
+
 
     private void uploadImageToServer(Uri imageUri) {
         try {
             InputStream inputStream = getContentResolver().openInputStream(imageUri);
             if (inputStream != null) {
-                // InputStream을 Bitmap으로 변환
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                byte[] byteArray = getByteArrayFromInputStream(inputStream);
 
-                // Bitmap을 다시 InputStream으로 변환
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-                byte[] byteArray = byteArrayOutputStream.toByteArray();
-                InputStream convertedInputStream = new ByteArrayInputStream(byteArray);
-
-                // 현재 날짜와 시간을 기반으로 고유한 이미지 파일 이름 생성
                 String imageName = generateImageFileName();
 
                 RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), byteArray);
@@ -141,6 +135,17 @@ public class CameraActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
+
+    private byte[] getByteArrayFromInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            byteArrayOutputStream.write(buffer, 0, bytesRead);
+        }
+        return byteArrayOutputStream.toByteArray();
+    }
+
 
     private String generateImageFileName() {
         // 현재 날짜와 시간 가져오기
