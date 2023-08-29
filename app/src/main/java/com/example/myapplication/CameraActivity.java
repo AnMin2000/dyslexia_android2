@@ -86,18 +86,18 @@ public class CameraActivity extends AppCompatActivity {
             // imageView.setImageBitmap(photo); 앨범에 사진을 표시 하는 코드
 
 
-                imageUri = getImageUri(photo);
+            imageUri = getImageUri(photo);
 
-                // 이미지를 서버로 업로드
-                uploadImageToServer(imageUri);
+            // 이미지를 서버로 업로드
+            uploadImageToServer(imageUri);
 
-            }
         }
+    }
 
     private Uri getImageUri(Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream); // 압축 품질을 80으로 변경
-        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "image", null);
+        String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "body", null);
         return Uri.parse(path);
     }
 
