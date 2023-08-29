@@ -7,7 +7,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.icu.text.SimpleDateFormat;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -64,6 +66,10 @@ public class CameraActivity extends AppCompatActivity {
             if (currentPhotoPath != null) {
                 Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath);
                 if (imageBitmap != null) {
+                    int rotation = getImageRotation(currentPhotoPath);
+                    imageBitmap = rotateBitmap(imageBitmap, rotation);
+
+
                     imageView.setImageBitmap(imageBitmap);
                     uploadImageToServer(photoFile);
                 } else {
@@ -146,5 +152,44 @@ public class CameraActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    // 이미지 회전 정보 가져오기
+    private int getImageRotation(String imagePath) {
+        try {
+            ExifInterface exif = new ExifInterface(imagePath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return 90;
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return 180;
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return 270;
+                default:
+                    return 0;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    // 이미지 회전하기
+    private Bitmap rotateBitmap(Bitmap bitmap, int degrees) {
+        if (degrees != 0 && bitmap != null) {
+            Matrix matrix = new Matrix();
+            matrix.setRotate(degrees, bitmap.getWidth() / 2, bitmap.getHeight() / 2);
+            try {
+                Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                if (bitmap != rotatedBitmap) {
+                    bitmap.recycle();
+                }
+                return rotatedBitmap;
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+                return bitmap;
+            }
+        }
+        return bitmap;
     }
 }
