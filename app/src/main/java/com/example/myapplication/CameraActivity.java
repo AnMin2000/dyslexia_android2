@@ -1,7 +1,7 @@
 package com.example.myapplication;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -10,33 +10,28 @@ import android.graphics.BitmapFactory;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.Locale;
+import java.util.Date;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CameraActivity extends AppCompatActivity {
-
-    private static final int REQUEST_IMAGE_CODE = 101;
     private Button btn_picture;
     private ImageView imageView;
+    File photoFile;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -51,59 +46,77 @@ public class CameraActivity extends AppCompatActivity {
         btn_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                takePicture();
+                dispatchTakePictureIntent();
             }
         });
     }
 
     // 사진찍기
-    public void takePicture() {
-        Intent imageTakeIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
-        if (imageTakeIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(imageTakeIntent, REQUEST_IMAGE_CODE);
-        }
-    }
 
     // 결과값 가져오기
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_IMAGE_CODE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap photo = (Bitmap) extras.get("data");
-
-            // 이미지를 파일로 저장
-            File imageFile = saveBitmapToFile(photo);
-
-            if (imageFile != null) {
-                imageView.setImageBitmap(photo);
-                // 이미지를 서버로 업로드
-                uploadImageToServer(imageFile);
+        Log.d("ActivityResult", "Request Code: " + requestCode + ", Result Code: " + resultCode);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            if (currentPhotoPath != null) {
+                Bitmap imageBitmap = BitmapFactory.decodeFile(currentPhotoPath);
+                if (imageBitmap != null) {
+                    imageView.setImageBitmap(imageBitmap);
+                    uploadImageToServer(photoFile);
+                } else {
+                    Log.e("ActivityResult", "Bitmap could not be loaded from file");
+                }
+            } else {
+                Log.e("ActivityResult", "currentPhotoPath is null");
             }
+        } else {
+            Log.e("ActivityResult", "Invalid request or result code");
         }
     }
 
-    // 이미지를 파일로 저장하는 메서드
-    private File saveBitmapToFile(Bitmap bitmap) {
-        File filesDir = getApplicationContext().getFilesDir();
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
-        String formattedDate = sdf.format(calendar.getTime());
-        String fileName = "image_" + formattedDate + ".jpg";
 
-        File imageFile = new File(filesDir, fileName);
 
-        try {
-            FileOutputStream out = new FileOutputStream(imageFile);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
-            return imageFile;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+    String currentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    static final int REQUEST_TAKE_PHOTO = 1;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.myapplication.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
         }
     }
 
