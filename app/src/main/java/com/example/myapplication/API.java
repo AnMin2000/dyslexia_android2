@@ -21,11 +21,4 @@ public interface API {
     @POST("/shot")
     Call<String> getCameraResponse(@Part MultipartBody.Part image);
 
-//    @Multipart
-//    @POST("/shot")
-//    Call<ResponseBody> post_posts(
-//            @Part("title") RequestBody param,
-//            @Part MultipartBody.Part image
-//    );
-
 }

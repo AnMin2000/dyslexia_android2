@@ -18,11 +18,11 @@
         />
 
     <ImageView
-        android:layout_width="250dp"
-        android:layout_height="250dp"
-        android:src="@mipmap/ic_launcher"
+        android:id="@+id/imageView"
+        android:layout_width="411dp"
+        android:layout_height="540dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="55dp"
-        android:id="@+id/imageView"/>
+        android:src="@mipmap/ic_launcher" />
 
 </LinearLayout>
