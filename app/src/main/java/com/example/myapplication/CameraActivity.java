@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -71,6 +72,16 @@ public class CameraActivity extends AppCompatActivity {
 
 
                     imageView.setImageBitmap(imageBitmap);
+
+
+                    Intent intent = new Intent(CameraActivity.this, OcrActivity.class);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 10, stream);
+                    byte[] byteArray = stream.toByteArray();
+                    intent.putExtra("image", byteArray);
+                    //System.out.println("******************************************");
+                    startActivity(intent);
+
                     uploadImageToServer(photoFile);
                 } else {
                     Log.e("ActivityResult", "Bitmap could not be loaded from file");
