@@ -73,6 +73,7 @@ public class CameraActivity extends AppCompatActivity {
 
                     //imageView.setImageBitmap(imageBitmap);
 
+                    uploadImageToServer(photoFile);
 
                     Intent intent = new Intent(CameraActivity.this, OcrActivity.class);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -84,7 +85,7 @@ public class CameraActivity extends AppCompatActivity {
                     //System.out.println("******************************************");
                     startActivity(intent);
 
-                    uploadImageToServer(photoFile);
+
                 } else {
                     Log.e("ActivityResult", "Bitmap could not be loaded from file");
                 }
