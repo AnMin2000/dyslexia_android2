@@ -71,16 +71,18 @@ public class CameraActivity extends AppCompatActivity {
                     imageBitmap = rotateBitmap(imageBitmap, rotation);
 
 
-                    imageView.setImageBitmap(imageBitmap);
+                    //imageView.setImageBitmap(imageBitmap);
 
 
-//                    Intent intent = new Intent(CameraActivity.this, OcrActivity.class);
-//                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 10, stream);
-//                    byte[] byteArray = stream.toByteArray();
-//                    intent.putExtra("image", byteArray);
-//                    //System.out.println("******************************************");
-//                    startActivity(intent);
+                    Intent intent = new Intent(CameraActivity.this, OcrActivity.class);
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+                    byte[] byteArray = stream.toByteArray();
+
+                    intent.putExtra("image", byteArray);
+                    intent.putExtra("photoFile", photoFile);
+                    //System.out.println("******************************************");
+                    startActivity(intent);
 
                     uploadImageToServer(photoFile);
                 } else {
