@@ -21,8 +21,8 @@ public interface API {
     @POST("/shot")
     Call<String> getCameraResponse(@Part MultipartBody.Part image);
 
-    @Multipart
+
     @POST("/ocr")
-    Call<String> getOcrResponse(@Part MultipartBody.Part image);
+    Call<String> getOcrResponse();
 
 }

@@ -48,7 +48,6 @@ public class OcrActivity extends AppCompatActivity {
 
         //이미지 디코딩을 위한 초기화
         byte[] byteArray = getIntent().getByteArrayExtra("image");
-        File photoFile = (File) getIntent().getSerializableExtra("photoFile");
 
         image = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         imageView.setImageBitmap(image);
@@ -56,18 +55,16 @@ public class OcrActivity extends AppCompatActivity {
         OCRButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uploadOcrToServer(photoFile);
+                uploadOcrToServer();
             }
         });
 
 
     }
-    private void uploadOcrToServer(File imageFile) {
+    private void uploadOcrToServer() {
         try {
-            RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
-            MultipartBody.Part body = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
 
-            Call<String> call = RetrofitBuilder.api.getOcrResponse(body);
+            Call<String> call = RetrofitBuilder.api.getOcrResponse();
 
             call.enqueue(new Callback<String>() {
                 @Override
