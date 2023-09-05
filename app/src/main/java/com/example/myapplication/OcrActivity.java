@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.myapplication.dto.OcrData;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 import java.io.File;
@@ -64,22 +65,22 @@ public class OcrActivity extends AppCompatActivity {
     private void uploadOcrToServer() {
         try {
 
-            Call<String> call = RetrofitBuilder.api.getOcrResponse();
+            Call<OcrData> call = RetrofitBuilder.api.getOcrResponse();
 
-            call.enqueue(new Callback<String>() {
+            call.enqueue(new Callback<OcrData>() {
                 @Override
-                public void onResponse(Call<String> call, Response<String> response) {
+                public void onResponse(Call<OcrData> call, Response<OcrData> response) {
                     if (response.isSuccessful()) {
-                        String ocrResult = response.body();
-                        Log.d("Ocr", response.body());
-                        OCRTextView.setText(ocrResult);
+                        OcrData data = response.body();
+                        String name = data.getData();
+                        OCRTextView.setText(name);
                     } else {
                         Log.e("Ocr", "Ocr 업로드 실패");
                     }
                 }
 
                 @Override
-                public void onFailure(Call<String> call, Throwable t) {
+                public void onFailure(Call<OcrData> call, Throwable t) {
                     Log.e("Ocr", "Ocr 업로드 실패", t);
                 }
             });

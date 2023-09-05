@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import com.example.myapplication.dto.Album;
+import com.example.myapplication.dto.OcrData;
 import com.example.myapplication.dto.User;
 
 import okhttp3.MultipartBody;
@@ -23,7 +24,7 @@ public interface API {
     Call<String> getCameraResponse(@Part MultipartBody.Part image);
 
     @POST("/ocr")
-    Call<String> getOcrResponse();
+    Call<OcrData> getOcrResponse();
 
 
 }
