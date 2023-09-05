@@ -26,5 +26,8 @@ public interface API {
     @POST("/ocr")
     Call<OcrData> getOcrResponse();
 
+    @POST("/summarize")
+    Call<String> test();
+
 
 }
