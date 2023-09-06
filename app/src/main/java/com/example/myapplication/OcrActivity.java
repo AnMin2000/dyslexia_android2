@@ -35,7 +35,9 @@ public class OcrActivity extends AppCompatActivity {
     Bitmap image; //사용되는 이미지
     TextView OCRTextView; // OCR 결과뷰
     ImageView imageView;
-    Button OCRButton;
+    Button OCRButton, test;
+
+    OcrData data;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class OcrActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         OCRButton = findViewById(R.id.OCRButton);
         OCRTextView = findViewById(R.id.OCRTextView);
+        test = findViewById(R.id.test);
 
         //이미지 디코딩을 위한 초기화
         byte[] byteArray = getIntent().getByteArrayExtra("image");
@@ -59,7 +62,30 @@ public class OcrActivity extends AppCompatActivity {
                 uploadOcrToServer();
             }
         });
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Call<String> call = RetrofitBuilder.api.sendOcrData(data);
 
+                call.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Call<String> call, Response<String> response) {
+                        if (response.isSuccessful()) {
+                            Log.e("test", "성공");
+                        } else {
+                            String test = response.body();
+                            System.out.println(test);
+                            Log.e("test", "실패 1");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<String> call, Throwable t) {
+                        Log.e("test", "실패 2", t);
+                    }
+                });
+            }
+        });
 
     }
     private void uploadOcrToServer() {
@@ -71,7 +97,7 @@ public class OcrActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<OcrData> call, Response<OcrData> response) {
                     if (response.isSuccessful()) {
-                        OcrData data = response.body();
+                        data = response.body();
                         String name = data.getData();
                         OCRTextView.setText(name);
                     } else {

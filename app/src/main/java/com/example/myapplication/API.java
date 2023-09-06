@@ -27,7 +27,7 @@ public interface API {
     Call<OcrData> getOcrResponse();
 
     @POST("/summarize")
-    Call<String> test();
+    Call<String> sendOcrData(@Body OcrData data);
 
 
 }

@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
            // System.out.println(user.getId());
             Log.d("BUTTON CLICKED", "id: " + user.getId() + ", pw: " + user.getPassword());
             login(user);
-            Intent intent = new Intent(MainActivity.this,test.class); // cameraActivity
+            Intent intent = new Intent(MainActivity.this,CameraActivity.class); // cameraActivity
             startActivity(intent);
         });
     }
