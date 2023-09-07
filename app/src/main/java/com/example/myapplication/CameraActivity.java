@@ -36,6 +36,7 @@ public class CameraActivity extends AppCompatActivity {
     private ImageView imageView;
     File photoFile;
 
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,10 +76,12 @@ public class CameraActivity extends AppCompatActivity {
 
                     uploadImageToServer(photoFile);
 
-                    Intent intent = new Intent(CameraActivity.this, OcrActivity.class);
+
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
                     imageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
                     byte[] byteArray = stream.toByteArray();
+
+                    Intent intent = new Intent(CameraActivity.this, OcrActivity.class);
 
                     intent.putExtra("image", byteArray);
                     intent.putExtra("photoFile", photoFile);
