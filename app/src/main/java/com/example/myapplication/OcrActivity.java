@@ -3,7 +3,6 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,18 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.dto.OcrData;
-import com.googlecode.tesseract.android.TessBaseAPI;
+import com.example.myapplication.dto.Summarize;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,11 +26,13 @@ import retrofit2.Response;
 public class OcrActivity extends AppCompatActivity {
 
     Bitmap image; //사용되는 이미지
-    TextView OCRTextView; // OCR 결과뷰
+    TextView OCRTextView, summarizeTextView; // OCR 결과뷰
     ImageView imageView;
-    Button OCRButton, test;
+    Button OCRButton, summarizeButton;
 
     OcrData data;
+    Summarize data2;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +43,8 @@ public class OcrActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         OCRButton = findViewById(R.id.OCRButton);
         OCRTextView = findViewById(R.id.OCRTextView);
-        test = findViewById(R.id.test);
+        summarizeTextView = findViewById(R.id.summarizeTextView);
+        summarizeButton = findViewById(R.id.summarizeButton);
 
         //이미지 디코딩을 위한 초기화
         byte[] byteArray = getIntent().getByteArrayExtra("image");
@@ -62,25 +58,52 @@ public class OcrActivity extends AppCompatActivity {
                 uploadOcrToServer();
             }
         });
-        test.setOnClickListener(new View.OnClickListener() {
+        summarizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Call<String> call = RetrofitBuilder.api.sendOcrData(data);
+                Call<Summarize> call2 = RetrofitBuilder.api.sendOcrData(data);
 
-                call.enqueue(new Callback<String>() {
+                call2.enqueue(new Callback<Summarize>() {
                     @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
+                    public void onResponse(Call<Summarize> call, Response<Summarize> response) {
                         if (response.isSuccessful()) {
-                            Log.e("test", "성공");
+                            data2 = response.body();
+                            String name = data2.getData2();
+
+                            try {
+                                JSONObject jsonObject = new JSONObject(name);
+
+                                // "choices" 필드가 존재하는지 확인
+                                if (jsonObject.has("choices")) {
+                                    JSONArray choices = jsonObject.getJSONArray("choices");
+                                    if (choices.length() > 0) {
+                                        JSONObject choice = choices.getJSONObject(0);
+                                        JSONObject message = choice.getJSONObject("message");
+                                        String content = message.getString("content");
+
+                                        // "content"를 출력하거나 다른 작업 수행
+                                        System.out.println(content);
+
+                                        // 여기에서 content 변수에 있는 텍스트만 추출됩니다.
+                                        String extractedText = content;
+
+                                        // 추출된 텍스트를 다른 곳에 사용하려면 이어서 작업을 수행하세요.
+                                        // 예를 들어, summarizeTextView에 설정하려면 다음과 같이 사용할 수 있습니다.
+                                         summarizeTextView.setText(extractedText);
+                                    }
+                                } else {
+                                    Log.e("test", "No 'choices' field in the JSON response");
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         } else {
-                            String test = response.body();
-                            System.out.println(test);
                             Log.e("test", "실패 1");
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<String> call, Throwable t) {
+                    public void onFailure(Call<Summarize> call, Throwable t) {
                         Log.e("test", "실패 2", t);
                     }
                 });
