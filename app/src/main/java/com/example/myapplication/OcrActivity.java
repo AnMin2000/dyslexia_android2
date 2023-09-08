@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,10 +31,12 @@ public class OcrActivity extends AppCompatActivity {
     Bitmap image; //사용되는 이미지
     TextView OCRTextView, summarizeTextView; // OCR 결과뷰
     ImageView imageView;
-    Button OCRButton, summarizeButton;
+    Button OCRButton, summarizeButton, soundButton;
 
     OcrData data;
     Summarize data2;
+
+    TextToSpeech textToSpeech;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -45,6 +50,7 @@ public class OcrActivity extends AppCompatActivity {
         OCRTextView = findViewById(R.id.OCRTextView);
         summarizeTextView = findViewById(R.id.summarizeTextView);
         summarizeButton = findViewById(R.id.summarizeButton);
+        soundButton = findViewById(R.id.soundButton);
 
         //이미지 디코딩을 위한 초기화
         byte[] byteArray = getIntent().getByteArrayExtra("image");
@@ -109,7 +115,37 @@ public class OcrActivity extends AppCompatActivity {
                 });
             }
         });
+        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int langResult = textToSpeech.setLanguage(Locale.KOREA);
 
+                    if (langResult == TextToSpeech.LANG_MISSING_DATA || langResult == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        // 언어 데이터가 없거나 지원되지 않는 경우 처리
+                        // 필요에 따라 에러 처리를 추가하세요.
+                    }
+                }
+            }
+        });
+        soundButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (textToSpeech != null) {
+                    String textToRead = summarizeTextView.getText().toString();
+                    textToSpeech.speak(textToRead, TextToSpeech.QUEUE_FLUSH, null, null);
+                }
+            }
+        });
+
+    }
+    @Override
+    protected void onDestroy() {
+        if (textToSpeech != null) {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        super.onDestroy();
     }
     private void uploadOcrToServer() {
         try {
