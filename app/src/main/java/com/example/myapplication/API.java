@@ -7,6 +7,7 @@ import com.example.myapplication.dto.User;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -14,7 +15,11 @@ import retrofit2.http.Part;
 public interface API {
     // 로그인
     @POST("/insert")
-    Call<String> getLoginResponse(@Body User user);
+    Call<String> getSignUpResponse(@Body User user);
+    @POST("/login")
+    Call<Integer> getLoginResponse(@Body User user);
+    @POST("/search")
+    Call<User> getSearchResponse(@Body User user);
 
     @Multipart
     @POST("/shot")

@@ -44,13 +44,13 @@ public class SignUpActivity extends AppCompatActivity {
             user.setPassword(pw);
             // System.out.println(user.getId());
             Log.d("BUTTON CLICKED", "id: " + id + ", pw: " + pw);
-            login(user);
+            SignUp(user);
             Intent intent = new Intent(SignUpActivity.this,LoginActivity.class); // cameraActivity
             startActivity(intent);
         });
     }
-    private void login(User user) {
-        Call<String> call = RetrofitBuilder.api.getLoginResponse(user);
+    private void SignUp(User user) {
+        Call<String> call = RetrofitBuilder.api.getSignUpResponse(user);
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
