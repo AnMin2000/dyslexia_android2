@@ -119,7 +119,7 @@ public class OcrActivity extends AppCompatActivity {
             @Override
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
-                    int langResult = textToSpeech.setLanguage(Locale.KOREA);
+                    int langResult = textToSpeech.setLanguage(Locale.KOREA); // 한 영 설정
 
                     if (langResult == TextToSpeech.LANG_MISSING_DATA || langResult == TextToSpeech.LANG_NOT_SUPPORTED) {
                         // 언어 데이터가 없거나 지원되지 않는 경우 처리

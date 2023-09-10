@@ -8,29 +8,87 @@
     android:orientation="vertical"
     >
 
-    <Button
-        android:id="@+id/btn_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="사진찍기"
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="369dp"
+        android:layout_height="66dp"
+        android:src="@drawable/title"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.061"
+        app:layout_constraintVertical_bias="0.143"
         tools:ignore="MissingConstraints" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="412dp"
-        android:layout_height="475dp"
+    <ImageButton
+        android:id="@+id/language"
+        android:layout_width="61dp"
+        android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
-        android:src="@mipmap/ic_launcher"
+        android:background="@android:color/transparent"
+        android:src="@drawable/language"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.437"
         tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:layout_width="95dp"
+        android:layout_height="31dp"
+        android:text="Kor"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.829"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.519"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:layout_width="131dp"
+        android:layout_height="31dp"
+        android:text="Language     : "
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.367"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.519"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/btn_picture"
+        android:layout_width="61dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@android:color/transparent"
+        android:src="@drawable/camera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.923"
+        tools:ignore="MissingConstraints" />
+
+    <ImageButton
+        android:id="@+id/album"
+        android:layout_width="61dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@android:color/transparent"
+        android:src="@drawable/album"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.891"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.922"
+        tools:ignore="MissingConstraints" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

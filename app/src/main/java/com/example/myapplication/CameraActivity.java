@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
@@ -32,8 +33,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CameraActivity extends AppCompatActivity {
-    private Button btn_picture;
-    private ImageView imageView;
+    private ImageButton btn_picture;
+
     File photoFile;
 
 
@@ -43,7 +44,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        imageView = findViewById(R.id.imageView);
+
 
         btn_picture = findViewById(R.id.btn_picture);
 
@@ -72,7 +73,6 @@ public class CameraActivity extends AppCompatActivity {
                     imageBitmap = rotateBitmap(imageBitmap, rotation);
 
 
-                    //imageView.setImageBitmap(imageBitmap);
 
                     uploadImageToServer(photoFile);
 
