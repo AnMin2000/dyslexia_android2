@@ -22,6 +22,8 @@ import org.json.JSONObject;
 
 import java.util.Locale;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,8 +45,6 @@ public class OcrActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ocr);
-
-
         imageView = findViewById(R.id.imageView);
         OCRButton = findViewById(R.id.OCRButton);
         OCRTextView = findViewById(R.id.OCRTextView);
@@ -67,6 +67,11 @@ public class OcrActivity extends AppCompatActivity {
         summarizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                String id = getIntent().getStringExtra("id");
+                RequestBody idPart = RequestBody.create(MediaType.parse("text/plain"), id);
+
+
                 Call<Summarize> call2 = RetrofitBuilder.api.sendOcrData(data);
 
                 call2.enqueue(new Callback<Summarize>() {
@@ -150,7 +155,10 @@ public class OcrActivity extends AppCompatActivity {
     private void uploadOcrToServer() {
         try {
 
-            Call<OcrData> call = RetrofitBuilder.api.getOcrResponse();
+            String id = getIntent().getStringExtra("id");
+            String filename = getIntent().getStringExtra("fileName");
+
+            Call<OcrData> call = RetrofitBuilder.api.getOcrResponse(id, filename);
 
             call.enqueue(new Callback<OcrData>() {
                 @Override

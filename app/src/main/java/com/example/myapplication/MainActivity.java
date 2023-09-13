@@ -13,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // Handler를 사용하여 2초 뒤에 SignUpActivity로 넘어가도록 설정
         new Handler().postDelayed(new Runnable() {
             @Override

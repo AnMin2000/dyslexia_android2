@@ -13,7 +13,7 @@ public class RetrofitBuilder {
         Gson gson = new GsonBuilder().setLenient().create();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://172.29.209.107:8080/") // 요청 보내는 API 서버 url. /로 끝나야 함
+                .baseUrl("http://172.29.211.68:8080/") // 요청 보내는 API 서버 url. /로 끝나야 함
                 .addConverterFactory(GsonConverterFactory.create(gson)) // Gson을 역직렬화
                 .build();
         api = retrofit.create(API.class);

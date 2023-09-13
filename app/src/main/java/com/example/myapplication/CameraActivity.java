@@ -20,6 +20,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.example.myapplication.dto.Picture;
+import com.google.gson.Gson;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -33,10 +36,10 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CameraActivity extends AppCompatActivity {
-    private ImageButton btn_picture;
+    private ImageButton btn_picture, album;
 
     File photoFile;
-
+    String timeStamp, fileName;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -45,13 +48,20 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
 
-
         btn_picture = findViewById(R.id.btn_picture);
+        album = findViewById(R.id.album);
 
         btn_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
+            }
+        });
+
+        album.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }
@@ -82,9 +92,11 @@ public class CameraActivity extends AppCompatActivity {
                     byte[] byteArray = stream.toByteArray();
 
                     Intent intent = new Intent(CameraActivity.this, OcrActivity.class);
-
+                    String id = getIntent().getStringExtra("id");
+                    intent.putExtra("id", id);
                     intent.putExtra("image", byteArray);
                     intent.putExtra("photoFile", photoFile);
+                    intent.putExtra("fileName", fileName);
                     //System.out.println("******************************************");
                     startActivity(intent);
 
@@ -106,7 +118,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
@@ -149,7 +161,17 @@ public class CameraActivity extends AppCompatActivity {
             RequestBody requestFile = RequestBody.create(MediaType.parse("image/jpeg"), imageFile);
             MultipartBody.Part body = MultipartBody.Part.createFormData("image", imageFile.getName(), requestFile);
 
-            Call<String> call = RetrofitBuilder.api.getCameraResponse(body);
+
+            fileName = imageFile.getName();
+            //
+            String id = getIntent().getStringExtra("id");
+            RequestBody idPart = RequestBody.create(MediaType.parse("text/plain"), id);
+            //
+
+
+
+            Call<String> call = RetrofitBuilder.api.getCameraResponse(body, idPart);
+
 
             call.enqueue(new Callback<String>() {
                 @Override
@@ -208,5 +230,13 @@ public class CameraActivity extends AppCompatActivity {
             }
         }
         return bitmap;
+    }
+    private RequestBody pictureToRequestBody(Picture picture) {
+        // Picture 객체를 바이트 배열로 변환하는 로직을 작성하세요.
+        // 예를 들어, Gson 라이브러리를 사용하여 JSON 문자열로 변환한 후 바이트 배열로 변환할 수 있습니다.
+        // Gson 사용 예시:
+        Gson gson = new Gson();
+        String json = gson.toJson(picture);
+        return RequestBody.create(MediaType.parse("application/json"), json.getBytes());
     }
 }

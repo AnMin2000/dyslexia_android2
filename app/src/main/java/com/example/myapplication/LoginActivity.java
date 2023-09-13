@@ -84,7 +84,9 @@ public class LoginActivity extends AppCompatActivity {
                     int count = response.body();
 
                     if(count > 0) {
+
                         Intent intent = new Intent(LoginActivity.this, CameraActivity.class); // cameraActivity
+                        intent.putExtra("id", id);
                         startActivity(intent);
                     }
                     else {
