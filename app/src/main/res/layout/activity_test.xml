@@ -7,27 +7,23 @@
     tools:context=".test"
     tools:ignore="ExtraText">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="192dp"
-        android:layout_height="85dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.136" />
+   <ImageView
+       android:id="@+id/imageView6"
+       android:layout_width="194dp"
+       android:layout_height="145dp"
+       android:src="@drawable/a8"
+       tools:ignore="MissingConstraints"
+       tools:layout_editor_absoluteX="6dp"
+       tools:layout_editor_absoluteY="53dp" />
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#FF5722"
-        android:text="Button"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="160dp"
-        tools:layout_editor_absoluteY="356dp" />
+   <ImageView
+       android:id="@+id/imageView3"
+       android:layout_width="194dp"
+       android:layout_height="145dp"
+       android:src="@drawable/a8"
+       tools:ignore="MissingConstraints"
+       tools:layout_editor_absoluteX="213dp"
+       tools:layout_editor_absoluteY="53dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
