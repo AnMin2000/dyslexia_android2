@@ -20,7 +20,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -69,8 +71,10 @@ public class OcrActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 String id = getIntent().getStringExtra("id");
-                RequestBody idPart = RequestBody.create(MediaType.parse("text/plain"), id);
+                String filename = getIntent().getStringExtra("fileName");
 
+                data.setPictureID(filename);
+                data.setId(id);
 
                 Call<Summarize> call2 = RetrofitBuilder.api.sendOcrData(data);
 
@@ -81,33 +85,7 @@ public class OcrActivity extends AppCompatActivity {
                             data2 = response.body();
                             String name = data2.getData2();
 
-                            try {
-                                JSONObject jsonObject = new JSONObject(name);
-
-                                // "choices" 필드가 존재하는지 확인
-                                if (jsonObject.has("choices")) {
-                                    JSONArray choices = jsonObject.getJSONArray("choices");
-                                    if (choices.length() > 0) {
-                                        JSONObject choice = choices.getJSONObject(0);
-                                        JSONObject message = choice.getJSONObject("message");
-                                        String content = message.getString("content");
-
-                                        // "content"를 출력하거나 다른 작업 수행
-                                        System.out.println(content);
-
-                                        // 여기에서 content 변수에 있는 텍스트만 추출됩니다.
-                                        String extractedText = content;
-
-                                        // 추출된 텍스트를 다른 곳에 사용하려면 이어서 작업을 수행하세요.
-                                        // 예를 들어, summarizeTextView에 설정하려면 다음과 같이 사용할 수 있습니다.
-                                         summarizeTextView.setText(extractedText);
-                                    }
-                                } else {
-                                    Log.e("test", "No 'choices' field in the JSON response");
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            summarizeTextView.setText(name);
                         } else {
                             Log.e("test", "실패 1");
                         }
@@ -158,7 +136,11 @@ public class OcrActivity extends AppCompatActivity {
             String id = getIntent().getStringExtra("id");
             String filename = getIntent().getStringExtra("fileName");
 
-            Call<OcrData> call = RetrofitBuilder.api.getOcrResponse(id, filename);
+            Map<String, String> requestBody = new HashMap<>();
+            requestBody.put("id", id);
+            requestBody.put("fileName", filename);
+
+            Call<OcrData> call = RetrofitBuilder.api.getOcrResponse(requestBody);
 
             call.enqueue(new Callback<OcrData>() {
                 @Override

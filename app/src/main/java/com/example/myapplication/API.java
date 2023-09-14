@@ -5,10 +5,13 @@ import com.example.myapplication.dto.Picture;
 import com.example.myapplication.dto.Summarize;
 import com.example.myapplication.dto.User;
 
+import java.util.Map;
+
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -32,7 +35,7 @@ public interface API {
 
 
     @POST("/ocr")
-    Call<OcrData> getOcrResponse(@Body String id, String fileName);
+    Call<OcrData> getOcrResponse(@Body Map<String, String> requestBody);
 
     @POST("/summarize")
     Call<Summarize> sendOcrData(@Body OcrData data);
