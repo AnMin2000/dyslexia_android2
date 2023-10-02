@@ -1,9 +1,11 @@
 package com.example.myapplication;
 
+import com.example.myapplication.dto.ImageResponse;
 import com.example.myapplication.dto.OcrData;
 import com.example.myapplication.dto.Summarize;
 import com.example.myapplication.dto.User;
 
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.MultipartBody;
@@ -15,6 +17,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 
 public interface API {
     // 로그인
@@ -36,8 +39,8 @@ public interface API {
     @POST("/summarize")
     Call<Summarize> sendOcrData(@Body OcrData data);
 
-    @GET("getImage") // 스프링 서버의 API 엔드포인트로 변경
-    Call<ResponseBody> getImage();
+    @GET("/getImages/{userID}")
+    Call<ImageResponse> getImages(@Path("userID") String userID);
 
 
 

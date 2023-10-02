@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
     android:padding="16dp"
-    tools:context=".TestPhotoActivity">
+    tools:context=".ImageActivity">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="fitCenter"
-        android:layout_centerInParent="true"
-        android:src="@drawable/album"
-    android:contentDescription="Image Description" />
-
-</RelativeLayout>
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:contentDescription="Photo" />
+</LinearLayout>
