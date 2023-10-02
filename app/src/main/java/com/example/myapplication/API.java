@@ -39,8 +39,6 @@ public interface API {
     @POST("/summarize")
     Call<Summarize> sendOcrData(@Body OcrData data);
 
-    @GET("/getImages/{userID}")
-    Call<ImageResponse> getImages(@Path("userID") String userID);
 
 
 
