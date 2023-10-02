@@ -1,11 +1,13 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,14 +23,15 @@ import java.util.List;
 
 public class ImageActivity extends AppCompatActivity {
 
-    private LinearLayout imageContainer;
+    TableLayout tableLayout;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image);
 
-        imageContainer = findViewById(R.id.imageContainer);
+        tableLayout = findViewById(R.id.tableLayout3);
 
         // AsyncTask를 사용하여 서버로부터 이미지를 다운로드하고 화면에 표시
         new DownloadImagesTask().execute("http://172.16.49.242:8080/getPhotos");
@@ -66,17 +69,33 @@ public class ImageActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<Bitmap> bitmapList) {
+            int numColumns = 2; // 열 수
+            int rowCount = 0; // 현재 행 수
+            TableRow currentRow = null;
+
             for (Bitmap bitmap : bitmapList) {
                 if (bitmap != null) {
+                    if (rowCount % numColumns == 0) {
+                        // 새로운 행을 추가
+                        currentRow = new TableRow(ImageActivity.this);
+                        tableLayout.addView(currentRow, new TableLayout.LayoutParams(
+                                TableLayout.LayoutParams.MATCH_PARENT,
+                                TableLayout.LayoutParams.WRAP_CONTENT
+                        ));
+                    }
+
+                    // ImageView를 생성하고 추가
                     ImageView imageView = new ImageView(ImageActivity.this);
-                    imageView.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    imageView.setLayoutParams(new TableRow.LayoutParams(
+                            TableRow.LayoutParams.WRAP_CONTENT,
+                            TableRow.LayoutParams.WRAP_CONTENT
                     ));
                     imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                     imageView.setAdjustViewBounds(true);
                     imageView.setImageBitmap(bitmap);
-                    imageContainer.addView(imageView);
+
+                    currentRow.addView(imageView);
+                    rowCount++;
                 }
             }
         }
