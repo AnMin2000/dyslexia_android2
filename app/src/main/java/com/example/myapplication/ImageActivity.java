@@ -1,6 +1,5 @@
 package com.example.myapplication;
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -25,7 +24,6 @@ public class ImageActivity extends AppCompatActivity {
 
     TableLayout tableLayout;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,29 +69,33 @@ public class ImageActivity extends AppCompatActivity {
         protected void onPostExecute(List<Bitmap> bitmapList) {
             int numColumns = 2; // 열 수
             int rowCount = 0; // 현재 행 수
-            TableRow currentRow = null;
 
             for (Bitmap bitmap : bitmapList) {
                 if (bitmap != null) {
                     if (rowCount % numColumns == 0) {
                         // 새로운 행을 추가
-                        currentRow = new TableRow(ImageActivity.this);
-                        tableLayout.addView(currentRow, new TableLayout.LayoutParams(
+                        TableRow currentRow = new TableRow(ImageActivity.this);
+                        tableLayout.addView(currentRow);
+
+                        // TableRow의 크기를 설정
+                        currentRow.setLayoutParams(new TableLayout.LayoutParams(
                                 TableLayout.LayoutParams.MATCH_PARENT,
-                                TableLayout.LayoutParams.WRAP_CONTENT
-                        ));
+                                500)); // TableRow의 높이를 145dp로 고정
                     }
 
                     // ImageView를 생성하고 추가
                     ImageView imageView = new ImageView(ImageActivity.this);
+
+                    // ImageView의 크기를 설정
                     imageView.setLayoutParams(new TableRow.LayoutParams(
-                            TableRow.LayoutParams.WRAP_CONTENT,
-                            TableRow.LayoutParams.WRAP_CONTENT
-                    ));
+                            250, // TableRow의 가로를 194dp로 고정
+                            280)); // TableRow의 높이를 145dp로 고정
                     imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
                     imageView.setAdjustViewBounds(true);
                     imageView.setImageBitmap(bitmap);
 
+                    // 현재 행에 ImageView 추가
+                    TableRow currentRow = (TableRow) tableLayout.getChildAt(rowCount / numColumns);
                     currentRow.addView(imageView);
                     rowCount++;
                 }
