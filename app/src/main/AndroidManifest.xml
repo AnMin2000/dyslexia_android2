@@ -18,10 +18,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".SummarizeActivity"
             android:exported="false" />
         <activity
-            android:name=".PictureActivity"
+            android:name=".ImageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".test"
@@ -42,7 +45,7 @@
             android:name=".CameraActivity"
             android:exported="false" />
         <activity
-            android:name=".ImageActivity"
+            android:name=".PictureActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -19,14 +19,14 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"        />
 
     <Button
         android:id="@+id/OCRButton"
-        android:layout_width="471dp"
-        android:layout_height="57dp"
-        android:text="RUN OCR"
+        android:layout_width="463dp"
+        android:layout_height="38dp"
         android:backgroundTint="#FF5722"
+        android:text="텍스트로 번역하기"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,35 +37,38 @@
         android:id="@+id/OCRTextView"
         android:layout_width="348dp"
         android:layout_height="160dp"
-        android:hint="text here"
+        android:hint="번역 결과"
+        android:textColorHint="#020202"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/OCRButton"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        android:background="@drawable/textview_border" />
 
     <TextView
         android:id="@+id/summarizeTextView"
         android:layout_width="350dp"
         android:layout_height="165dp"
-        android:hint="text here"
-        android:background="#84C3C3"
+        android:hint="요약 결과"
+        android:textColorHint="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.524"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/OCRButton"
-        app:layout_constraintVertical_bias="0.76" />
+        app:layout_constraintVertical_bias="0.76"
+        android:background="@drawable/textview_border"/>
 
     <Button
         android:id="@+id/summarizeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="요약"
         android:backgroundTint="#FF5722"
+        android:text="텍스트 요약 하기"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.207"
+        app:layout_constraintHorizontal_bias="0.151"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints" />
 
@@ -73,12 +76,12 @@
         android:id="@+id/soundButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="읽기"
         android:backgroundTint="#FF5722"
+        android:text="소리 내어 읽기"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.777"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.517"
+        app:layout_constraintStart_toEndOf="@+id/summarizeButton"
         tools:ignore="MissingConstraints" />
 
 
